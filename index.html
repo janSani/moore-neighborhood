@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<head>
+    <title>Neighborhood</title>
+    <link rel="stylesheet" href="style.css"></link>
+</head>
+<body>
+    <header>
+        <h1>Configurations on a Moore neighborhood</h1>
+    </header>
+    <div class="container grid">
+        <table>
+            <tr>
+                <td id="cellA1" class="corner"></td>
+                <td id="cellA2" class="edge"></td>
+                <td id="cellA3" class="corner"></td>
+            </tr>
+            <tr>
+                <td id="cellB1" class="edge"></td>
+                <td id="cellB2" class="middle"></td>
+                <td id="cellB3" class="edge"></td>
+            </tr>
+            <tr>
+                <td id="cellC1" class="corner"></td>
+                <td id="cellC2" class="edge"></td>
+                <td id="cellC3" class="corner"></td>
+            </tr>
+        </table>
+    </div>
+    <div class="container text" id="type">0</div>
+    <div class="container text" id="silly">Empty</div>
+    <div class="container">
+        <button id="clearBtn">Clear</button>
+        <button id="invertBtn">Invert</button>
+        <button id="randomBtn">Random</button>
+    </div>
+    <section id="ramble">
+        <h3>The motivation</h3>
+        <p>
+            In the game Minesweeper each numbered clue is surrounded by the corresponding 
+            number of mines. But have you ever wondered how many posible ways can mines surround each number?
+        </p>
+        <p>
+            Some years ago I made myself that question, I came up with a table of all possible combinatios
+            that are the same under rotation and reflection, and even gave names to them, some using Game of Life
+            lingo (like banana, duoplet or glider,) and others by shape.
+        </p>
+        <p>
+            It wasn't until recently and under further inspection of the Game of Life algorithms, I realised the
+            section about <a href="https://golly.sourceforge.io/Help/Algorithms/QuickLife.html" target="_blank" rel="noopener noreferrer">
+            non-totalistic rules</a> had a table very similar to the one I made, but with a more organized (and useful) naming convention.
+        </p>
+        <p>
+            So, based on this, I decided to put it all together into an interactive grid, which would automatically identify the pattern
+            and display which non-totalistic rule satisfies, along with the name I gave to the pattern, some of which I modified from the original.
+        </p>
+    </section>
+    <script src="definitions.js"></script>
+    <script src="cells.js"></script>
+    <script src="buttons.js"></script>
+</body>
