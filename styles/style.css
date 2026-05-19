@@ -60,20 +60,51 @@ html, body {
   width: 100%;
 }
 
-#resultsTableContainer table, th, td{
+#resultsTableContainer table, #resultsTableContainer th, #resultsTableContainer td{
   border:1px solid #2b2b2d;
   border-collapse: collapse;
 }
 
 #resultsTableContainer table{
-  width: 100%;
   white-space: nowrap;
 }
 
-#resultsTableContainer th,td {
+#resultsTable{
+  width: 100%;
+}
+
+#resultsTableContainer th, #resultsTableContainer td {
   padding:2px;
+}
+
+#detailTableContainer{
+  padding:5px 0px;
+}
+
+#detailTable{
+  width:60%;
 }
 
 .intSetting{
   width: 40px;
+}
+
+#intBoardContainer table, #intBoardContainer tr, #intBoardContainer td{
+  border:1px solid #2b2b2d;
+  border-collapse: collapse;
+}
+
+#intBoardContainer tr{
+  height: 40px;
+}
+
+
+#intBoardContainer td{
+  background-color: #484d6977;
+  width: 40px;
+}
+
+
+#intBoardContainer td.active{
+  background-color: #fff157;
 }

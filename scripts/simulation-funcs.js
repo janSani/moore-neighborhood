@@ -18,65 +18,67 @@ function makeBoard(size){
     shuffle(flat);
     let board = [];
     for (let i = 0; i<size[1];i++){
-        board.push(flat.slice(size[1]*i,size[1]*i+size[0]));
+        board.push(flat.slice(size[0]*i,size[0]*(i+1)));
     }
     return board;
 }
 
-function makePatternStringLists(board){
+function identifyPattern(pattern){
+    let patternString = pattern;
+    for (let i=0;i<4;i++){
+        for (const [key, value] of Object.entries(Patterns)) {
+            if (value[0].includes(patternString)) {
+                return key;
+            }
+        } 
+        patternString = patternString.slice(2) + patternString.slice(0,2);
+    }
+}
+
+function countPatterns(board){
     let nRows = board.length;
     let nCols = board[0].length;
-    let extendedBoard = [Array(nCols+2).fill(0)];
-    board.forEach(row => {
-        extendedBoard.push([0].concat(row.concat([0])));
-    });
-    extendedBoard.push(Array(nCols+2).fill(0));
-    let fullBoardPatterns = [];
-    let emptyCellPatterns = [];
-    let nonBoundaryPatterns = [];
-    let nonBoundaryEmptyCellPatterns = [];
 
-    for (let i=1; i<=nRows; i++){
-        for (let j=1; j<=nCols; j++){
+    let fullBoardPatterns = {"totalCells":0};
+    let emptyCellPatterns = {"totalCells":0};
+    let nonBoundaryPatterns = {"totalCells":0};
+    let nonBoundaryEmptyCellPatterns = {"totalCells":0};
+
+    for (let i=0; i<nRows; i++){
+        for (let j=0; j<nCols; j++){
             let cellPattern = '';
-            cellPattern += extendedBoard[i-1][j-1];
-            cellPattern += extendedBoard[i-1][j];
-            cellPattern += extendedBoard[i-1][j+1];
-            cellPattern += extendedBoard[i][j+1];
-            cellPattern += extendedBoard[i+1][j+1];
-            cellPattern += extendedBoard[i+1][j];
-            cellPattern += extendedBoard[i+1][j-1];
-            cellPattern += extendedBoard[i][j-1];
-            fullBoardPatterns.push(cellPattern);
-            if (extendedBoard[i][j] == 0) emptyCellPatterns.push(cellPattern);
-            if (1<i&&i<nRows&&1<j&&j<nCols) nonBoundaryPatterns.push(cellPattern);
-            if (1<i&&i<nRows&&1<j&&j<nCols&&extendedBoard[i][j] == 0) nonBoundaryEmptyCellPatterns.push(cellPattern);
-        }
-    }
-    return [fullBoardPatterns,emptyCellPatterns,nonBoundaryPatterns,nonBoundaryEmptyCellPatterns];
-}
+            cellPattern += board?.[i-1]?.[j-1] ?? "0";
+            cellPattern += board?.[i-1]?.[j] ?? "0";
+            cellPattern += board?.[i-1]?.[j+1] ?? "0";
+            cellPattern += board?.[i]?.[j+1] ?? "0";
+            cellPattern += board?.[i+1]?.[j+1] ?? "0";
+            cellPattern += board?.[i+1]?.[j] ?? "0";
+            cellPattern += board?.[i+1]?.[j-1] ?? "0";
+            cellPattern += board?.[i]?.[j-1] ??"0";
 
-function countPatterns(patternList) {
-    let patternCount = new Object()
-    patternList.forEach(pattern => {
-        let patternString = pattern;
-        countCode:{
-            for (let i=0;i<4;i++){
-                for (const [key, value] of Object.entries(Patterns)) {
-                    if (value[0].includes(patternString)) {
-                        if(Object.hasOwn(patternCount,key)) patternCount[key] += 1;
-                        else patternCount[key] = 1;
-                        break countCode;
-                    }
-                } 
-                patternString = patternString.slice(2) + patternString.slice(0,2);
+            let patternType = identifyPattern(cellPattern);
+
+            fullBoardPatterns[patternType] = patternType in fullBoardPatterns ? fullBoardPatterns[patternType] + 1 : 1;
+            fullBoardPatterns.totalCells++;
+            if (board[i][j] == 0) {
+                emptyCellPatterns[patternType] = patternType in emptyCellPatterns ? emptyCellPatterns[patternType] + 1 : 1;
+                emptyCellPatterns.totalCells++;
+            }
+            if (0<i&&i<nRows-1&&0<j&&j<nCols-1) {
+                nonBoundaryPatterns[patternType] = patternType in nonBoundaryPatterns ? nonBoundaryPatterns[patternType] + 1 : 1;
+                nonBoundaryPatterns.totalCells++;
+            }
+            if (0<i&&i<nRows-1&&0<j&&j<nCols-1&&board[i][j] == 0) {
+                nonBoundaryEmptyCellPatterns[patternType] = patternType in nonBoundaryEmptyCellPatterns ? nonBoundaryEmptyCellPatterns[patternType] + 1 : 1;
+                nonBoundaryEmptyCellPatterns.totalCells++;
             }
         }
-    });
-    return patternCount;
+    }
+
+    return [fullBoardPatterns,emptyCellPatterns,nonBoundaryPatterns,nonBoundaryEmptyCellPatterns,1]
 }
 
-function mergeObjects (a, b) {
+function mergeObjects(a,b){
     const keys = new Set([...Object.keys(a), ...Object.keys(b)]);
     const result = {};
 
@@ -87,31 +89,14 @@ function mergeObjects (a, b) {
     return result;
 };
 
-function simulateBoards(size, count){
-    let patternCounts = new Array(4).fill(new Object());
-    patternCounts.forEach(list => {
-        list.totalCells = 0;
-    });
-
-    for (let i=0;i<count;i++){
-        let patternStringLists = makePatternStringLists(makeBoard(size));
-        for (let j = 0; j < 4; j++) {
-            patternCounts[j] = mergeObjects(patternCounts[j],countPatterns(patternStringLists[j]));
-            patternCounts[j].totalCells += patternStringLists[j].length;
-        }
-    }
-
-    return patternCounts.concat(count);
-}
-
-function joinSimulations(a, b){
+function joinCounts(a,b) {
     return a.slice(0,4).map((num,i) => mergeObjects(num,b.slice(0,4)[i])).concat(a[4]+b[4]);
 }
-// function repeatTask() {
-//   total = joinSimulations(simulateBoards(beginner9x9Size,4000),total)
-//   if (total[4]<6500000) {
-//     setTimeout(repeatTask(), 1000);
-//   } else {
-//     console.log("Stopped.");
-//   }
-// }
+
+function countBoards(size, count){
+    let accumulator = countPatterns(makeBoard(size));
+    while(accumulator[4]<count){
+        accumulator = joinCounts(accumulator,countPatterns(makeBoard(size)));
+    }
+    return accumulator;
+}

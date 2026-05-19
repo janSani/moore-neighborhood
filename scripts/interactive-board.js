@@ -7,7 +7,7 @@ let intHeight = 8;
 let intMines = 10;
 
 intBoardSel.addEventListener('change',()=>{
-    let size = [intBoardWidth.value,intBoardHeight.value,intBoardMines.value]
+    let size = [+intBoardWidth.value,+intBoardHeight.value,+intBoardMines.value];
     intBoardWidth.setAttribute("disabled","");
     intBoardHeight.setAttribute("disabled","");
     intBoardMines.setAttribute("disabled","");
@@ -29,27 +29,32 @@ intBoardSel.addEventListener('change',()=>{
 });
 
 intBoardWidth.addEventListener('change',(event)=>{
-    intWidth = intBoardWidth.value;
+    intWidth = +intBoardWidth.value;
 });
 intBoardHeight.addEventListener('change',(event)=>{
-    intHeight = intBoardHeight.value;
+    intHeight = +intBoardHeight.value;
 });
 intBoardMines.addEventListener('change',(event)=>{
-    intMines = intBoardMines.value;
+    intMines = +intBoardMines.value;
 });
 
 let intMode = document.getElementById("intMode");
 function makeInteractiveBoard(){
     if(intMode.value=="generate"){
         board = makeBoard([intWidth,intHeight,intMines]);
-        // let table = document.createElement("table");
-        // for (let i=0;i<intBoardHeight;i++){
-        //     let row = document.createElement("tr");
-        //     for (let j=0;j<intBoardWidth;j++){
-        //         let td = document.createElement("td");
-        //     }
-        // }
+        let table = document.createElement("table");
+        board.forEach(boardRow => {
+            let tableRow = document.createElement("tr");
+            boardRow.forEach(boardCell => {
+                let tableCell = document.createElement("td");
+                if (boardCell == 1) tableCell.classList.add("active");
+                tableRow.appendChild(tableCell);
+            });
+            table.appendChild(tableRow);
+        });
+        table.id = "intBoard";
+        document.getElementById("intBoard").replaceWith(table);
     }
 }
 
-document.getElementById("makeIntBoardBtn").addEventListener(()=>{makeInteractiveBoard()});
+document.getElementById("makeIntBoardBtn").addEventListener('click',makeInteractiveBoard);

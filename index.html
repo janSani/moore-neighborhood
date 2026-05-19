@@ -6,8 +6,11 @@
 </head>
 <body>
     <header>
-        <h1>Configurations on a Moore neighborhood</h1>
+        <h1>Moore neighborhood and Minesweeper</h1>
     </header>
+    <section class="ramble">
+        <h2>Interactive grid</h2>
+    </section>
     <div class="container grid">
         <table>
             <tr>
@@ -34,75 +37,39 @@
         <button id="invertBtn">Invert</button>
         <button id="randomBtn">Random</button>
     </div>
+    
     <section class="ramble">
-        <h3>Motivation</h3>
-        <p>
-            In the game Minesweeper each numbered clue is surrounded by the corresponding 
-            number of mines. But have you ever wondered how many possible ways can mines surround each number?
+        <h3>Details and motivation</h3>
+        <p>The Moore neighborhood is defined on a two dimensional square lattice and is composed of a central cell
+            and the eight cells that surround it.
         </p>
-        <p>
-            Some years ago I made myself that question, I came up with a table of all possible combinations
-            that are the same under rotation and reflection, and even gave names to them, some using Game of Life
-            lingo (like banana, duoplet or glider,) and others by shape.
+        <p>In the game Minesweeper each numbered clue is surrounded by the corresponding 
+            number of mines in a Moore neighborhood.
+            Some years ago I made myself a simple question, how many different ways can mines surround a clue?
+            It's clear that there's 512 possible ways, but treating those that are the same under rotation and reflection as one,
+            the number drops down to only 51. I made a table with all of these named them.
         </p>
         <p>
             It wasn't until recently and under further inspection of the Game of Life algorithms, I realised the
             section about <a href="https://golly.sourceforge.io/Help/Algorithms/QuickLife.html" target="_blank" rel="noopener noreferrer">
-            non-totalistic rules</a> had a table very similar to the one I made, but with a more organized (and useful) naming convention.
+            non-totalistic rules</a> had very similar table to the one I made, but with a more organized (and useful) naming convention.
         </p>
         <p>
-            So, based on this, I decided to put it all together into an interactive grid, which would automatically identify the pattern
-            and display which non-totalistic rule satisfies, along with the name I gave to the pattern, some of which I modified from the original.
+            So, I decided to make an interactive grid, which would automatically identify the pattern
+            and display which non-totalistic rule satisfies, along with the name I call those patterns.
         </p>
     </section>
     <section class="ramble">
         <h2>Frequency of each configuration in Minesweeper</h2>
         <p>Putting the focus back on Minesweeper, it's only natural to ask how often these patterns appear in actual boards.</p>
         <p>In order to estimate this I ran some simulations. I am purposefully ignoring nuances like first click or 3BV and simply generating
-            random boards of given size and number of mines, then for each cell the neighborhood configuration is identified.  
-        </p>
-        <p>By default the algorithm does this for every cell, but we can limit the search to non-mines or cells not on the boundary, 
+            random boards of given size and number of mines, then identifying the configuration for each neighborhood.  
+            By default the algorithm does this to every cell, but we can limit the search to non-mines or cells not on the boundary, 
             just for the sake of analysis.</p>
-    </section>
-    <section class="ramble">
-        <h3>Results</h3>
-        <p>For each board, I generated 10 millions boards. As for the 8s in beginner 9x9, I didn't get any, which is to be expected,
-            as the theoretical probability for an 8 in this size is around 1 in 15 million, 
-            compared to the 1 in 2.8 million of beginner 8x8.
+        <p>Before showing you my results, I invite you to try it yourself and see the results building up in real time with the interactive board.
+            Alternatively you can draw on the board, and the results table will update for you.
         </p>
-        <p>This is not an exhaustive search, Javascript is painfully slow and my code is far from
-            being optimized, so the less common numbers 7 and 8 may not robustly reflect the true probability of finding these on boards.
-            Feel free to take a look at the code on this page or its <a href="https://github.com/janSani/moore-neighborhood">repository</a> if you want to deep further in.
-        </p>
-        <p>But if you don't want to look at code and just want to visualize the boards being generated, 
-            and build your own results table, then the next section is for you!.</p>
-        <label for="boardSel">Select a board</label>
-        <select name="boardSel" id="boardSel">
-            <option value="beginner8x8">Beginner 8x8</option>
-            <option value="beginner9x9">Beginner 9x9</option>
-            <option value="intermediate">Intermediate</option>
-            <option value="expert">Expert</option>
-        </select><br>
-        <label for="conditionSel">Limit search to</label>
-        <select name="conditionSel" id="conditionSel">
-            <option value="fullBoard">All cells (mines and non-mines)</option>
-            <option value="emptyCells">Only non-mine cells</option>
-            <option value="nonBoundary">Cells not on the boundary</option>
-            <option value="nonBoundaryEmpty">Non-mine cells not on the boundary</option>
-        </select><br>
-        <button id="resultsBtn">Show me some results</button>
-        <div id="resultsTableContainer">
-            You may have to scroll sideways to read the full table.
-            <table id="resultsTable"></table>
-            <p id="numTableTitle"></p>
-            <table id="numTable"></table>
-        </div>
-    </section>
-    <section class="ramble">
-        <h2>Visualize board generation</h2>
-        <p>To wrap things up, I made an interactive Minesweeper board generator, which lets you generate random boards and
-            generate a list of all patterns you find. Alternatively, you can draw your own boards to test.
-        </p>
+        <h3>Interactive board</h3>
         <label for="intBoardSel">Select a board</label>
         <select name="intBoardSel" id="intBoardSel">
             <option value="beginner8x8">Beginner 8x8</option>
@@ -126,6 +93,40 @@
         <button id="makeIntBoardBtn">Make board</button>
         <div id="intBoardContainer">
             <table id="intBoard"></table>
+        </div>
+    </section>
+    <section class="ramble">
+        <h3>My results</h3>
+        <p>For each board size, I generated 10 millions boards. I didn't get any 8s in beginner 9x9, which is to be expected,
+            as the theoretical probability for an 8 in this size is around 1 in 15 million, 
+            compared to the 1 in 2.8 million of beginner 8x8.
+        </p>
+        <p>This is not an exhaustive search, the less common numbers like 7 and 8 may not robustly reflect the true probability of finding these on boards.
+            Also we have the first click condition which I mentioned earlier. 
+            Feel free to take a look at the code on this page or its <a href="https://github.com/janSani/moore-neighborhood">repository</a> 
+            if you want to dig further in. Be mindful the code is probably far from being optimal.
+        </p>
+        <label for="boardSel">Select a board</label>
+        <select name="boardSel" id="boardSel">
+            <option value="beginner8x8">Beginner 8x8</option>
+            <option value="beginner9x9">Beginner 9x9</option>
+            <option value="intermediate">Intermediate</option>
+            <option value="expert">Expert</option>
+        </select><br>
+        <label for="conditionSel">Limit search to</label>
+        <select name="conditionSel" id="conditionSel">
+            <option value="fullBoard">All cells (mines and non-mines)</option>
+            <option value="emptyCells">Only non-mine cells</option>
+            <option value="nonBoundary">Cells not on the boundary</option>
+            <option value="nonBoundaryEmpty">Non-mine cells not on the boundary</option>
+        </select><br>
+        <button id="resultsBtn">Show me some results</button>
+        <div id="resultsTableContainer">
+            You may have to scroll sideways to read the full table.
+            <table id="resultsTable"></table>
+            <div id="detailTableContainer">
+                <table id="detailTable"></table>
+            </div>
         </div>
     </section>
     <footer><a href="..">Check out my other stuff</a></footer>
