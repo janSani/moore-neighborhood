@@ -36,7 +36,8 @@ intBoardSel.addEventListener('change',()=>{
     });
 })
 
-let intMode = document.getElementById("intMode");
+let intModeSel = document.getElementById("intModeSel");
+intMode = "generate";
 let currentResults;
 let accumulatedResults = new Array(4).fill(new Object()).concat(0);
 let intResultsToShow;
@@ -45,7 +46,7 @@ let interactiveBoard;
 
 function makeInteractiveBoard(){
     document.getElementById("hideIntBoardBtn").removeAttribute("hidden");
-    if(intMode.value=="generate"){
+    if(intMode=="generate"){
         interactiveBoard = makeBoard(currentSize);
         currentResults = countPatterns(interactiveBoard);
         accumulatedResults = joinCounts(accumulatedResults,currentResults);
@@ -65,8 +66,8 @@ function makeInteractiveBoard(){
         document.getElementById("startSimulationBtn").textContent = "Start";
         document.getElementById("intBoardDrawSettings").removeAttribute("hidden");
         document.getElementById("intBoardResultSettings").removeAttribute("hidden");
-        document.getElementById("showAccumulated").setAttribute("hidden","");
         document.getElementById("showAccumulated").removeAttribute("checked","");
+        document.getElementById("showAccumulated").setAttribute("hidden","");
         document.getElementById("accumulateLabel").setAttribute("hidden","");
         document.getElementById("intBoardGenSettings").setAttribute("hidden","");
         document.getElementById("intGenPauseWarning").setAttribute("hidden","");
@@ -98,10 +99,12 @@ function updateIntBoard(){
                 cellPattern += interactiveBoard?.[i]?.[j-1] ??"0";
 
                 tableCell.textContent = identifyPattern(cellPattern);
-                tableCell.addEventListener('click',()=>{
+                if(intMode=='draw'){
+                    tableCell.addEventListener('click',()=>{
                     tableCell.classList.toggle("active");
                     intToggleCell(i,j);
                 });
+                }
                 tableRow.appendChild(tableCell);
             });
             table.appendChild(tableRow);
@@ -138,6 +141,7 @@ document.getElementById("makeIntBoardBtn").addEventListener('click',()=>{
     accumulatedResults = new Array(4).fill(new Object()).concat(0);
     currentSize = [+intBoardWidth.value,+intBoardHeight.value,+intBoardMines.value];
     document.getElementById("makeIntBoardBtn").classList.remove("highlighted");
+    intMode = intModeSel.value
     makeInteractiveBoard();
 });
 
@@ -151,7 +155,7 @@ let simulationStarted = false;
 let simulationPaused = false;
 function simulationLoop(){
     if (simulationStarted) {
-        if(!simulationPaused && intMode.value == "generate")makeInteractiveBoard();
+        if(!simulationPaused && intMode == "generate")makeInteractiveBoard();
         setTimeout(simulationLoop,25);
     }
 }
@@ -167,20 +171,7 @@ document.getElementById("startSimulationBtn").addEventListener('click',()=>{
     }
 });
 
-intMode.addEventListener('change',()=>{
-    if (intMode.value == 'generate'){
-        document.getElementById("intBoardDrawClearBtn").setAttribute("disabled","");
-        document.getElementById("intBoardDrawInvertBtn").setAttribute("disabled","");
-        document.getElementById("intBoardDrawRandomBtn").setAttribute("disabled","");
-        document.getElementById("startSimulationBtn").removeAttribute("disabled");
-        document.getElementById("stepSimulationBtn").removeAttribute("disabled");
-    } else {
-        document.getElementById("startSimulationBtn").setAttribute("disabled","");
-        document.getElementById("stepSimulationBtn").setAttribute("disabled","");
-        document.getElementById("intBoardDrawClearBtn").removeAttribute("disabled");
-        document.getElementById("intBoardDrawInvertBtn").removeAttribute("disabled");
-        document.getElementById("intBoardDrawRandomBtn").removeAttribute("disabled");
-    }
+intModeSel.addEventListener('change',()=>{
     document.getElementById("makeIntBoardBtn").classList.add("highlighted");
 })
 
